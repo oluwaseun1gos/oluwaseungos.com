@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>GOD OF SALVATION BRIGADE FORM</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background-color: purple;
+      color: white;
+    }
+    h1, h2 {
+      text-align: center;
+      color: #fff;
+    }
+    form > div {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+      color: white;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 8px;
+      border: none;
+      border-radius: 4px;
+      margin-top: 5px;
+    }
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      background-color: #f0f0ff;
+      color: black;
+    }
+    .hidden {
+      display: none;
+    }
+    .button-group {
+      text-align: center;
+      margin-top: 20px;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 5px;
+      background-color: white;
+      color: purple;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #ddd;
+    }
+    .preview-section {
+      border: 1px solid #ccc;
+      padding: 20px;
+      background: #ffffff;
+      color: black;
+      border-radius: 5px;
+    }
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+    ul li {
+      padding: 5px 0;
+    }
+    #passportPreview {
+      max-width: 150px;
+      max-height: 150px;
+      margin-top: 10px;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>GOD OF SALVATION BRIGADE FORM</h1>
+
+  <form id="brigadeForm">
+    <!-- Page 1: Biodata -->
+    <div id="page1">
+      <h2>Page 1: Biodata</h2>
+
+      <label for="fullName">Full Name:</label>
+      <input type="text" id="fullName" name="fullName" required>
+
+      <label for="dob">Date of Birth:</label>
+      <input type="date" id="dob" name="dob" required>
+
+      <label for="gender">Gender:</label>
+      <select id="gender" name="gender" required>
+        <option value="">--Select--</option>
+        <option>Male</option>
+        <option>Female</option>
+        <option>Other</option>
+      </select>
+
+      <label for="address">Home Address:</label>
+      <textarea id="address" name="address" rows="3" required></textarea>
+
+      <label for="phone">Phone Number:</label>
+      <input type="tel" id="phone" name="phone" required>
+
+      <label for="passport">Upload Passport Photo:</label>
+      <input type="file" id="passport" name="passport" accept="image/*" required>
+
+      <div class="button-group">
+        <button type="button" onclick="goToPage2()">Next</button>
+      </div>
+    </div>
+
+    <!-- Page 2: Medical Form -->
+    <div id="page2" class="hidden">
+      <h2>Page 2: Medical Information</h2>
+
+      <label for="bloodGroup">Blood Group:</label>
+      <select id="bloodGroup" name="bloodGroup" required>
+        <option value="">--Select--</option>
+        <option>A+</option>
+        <option>A-</option>
+        <option>B+</option>
+        <option>B-</option>
+        <option>AB+</option>
+        <option>AB-</option>
+        <option>O+</option>
+        <option>O-</option>
+      </select>
+
+      <label for="healthStatus">General Health Status:</label>
+      <textarea id="healthStatus" name="healthStatus" rows="3" required></textarea>
+
+      <label for="emergencyContact">Emergency Contact Name & Number:</label>
+      <input type="text" id="emergencyContact" name="emergencyContact" required>
+
+      <div class="button-group">
+        <button type="button" onclick="goToPage1()">Back</button>
+        <button type="button" onclick="showPreview()">Submit</button>
+      </div>
+    </div>
+  </form>
+
+  <!-- Page 3: Preview -->
+  <div id="previewPage" class="hidden">
+    <h2>Form Preview</h2>
+    <div class="preview-section" id="previewContent"></div>
+    <div id="imagePreviewContainer" style="text-align:center; margin-top: 20px;"></div>
+
+    <div class="button-group">
+      <button onclick="window.print()">Print</button>
+      <button onclick="editForm()">Edit</button>
+    </div>
+  </div>
+
+  <script>
+    function goToPage2() {
+      document.getElementById('page1').classList.add('hidden');
+      document.getElementById('page2').classList.remove('hidden');
+    }
+
+    function goToPage1() {
+      document.getElementById('page2').classList.add('hidden');
+      document.getElementById('page1').classList.remove('hidden');
+    }
+
+    function showPreview() {
+      const form = document.getElementById('brigadeForm');
+      const formData = new FormData(form);
+      let previewHtml = "<ul>";
+      for (let [key, value] of formData.entries()) {
+        if (key !== 'passport') {
+          const label = document.querySelector(`label[for="${key}"]`)?.innerText || key;
+          previewHtml += `<li><strong>${label}:</strong> ${value}</li>`;
+        }
+      }
+      previewHtml += "</ul>";
+      document.getElementById('previewContent').innerHTML = previewHtml;
+
+      // Show image preview
+      const fileInput = document.getElementById('passport');
+      const imageContainer = document.getElementById('imagePreviewContainer');
+      imageContainer.innerHTML = ""; // Clear previous
+
+      if (fileInput.files && fileInput.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const img = document.createElement('img');
+          img.src = e.target.result;
+          img.alt = "Passport Photo";
+          img.id = "passportPreview";
+          imageContainer.appendChild(img);
+        };
+        reader.readAsDataURL(fileInput.files[0]);
+      }
+
+      form.classList.add('hidden');
+      document.getElementById('previewPage').classList.remove('hidden');
+    }
+
+    function editForm() {
+      document.getElementById('previewPage').classList.add('hidden');
+      document.getElementById('page1').classList.remove('hidden');
+    }
+  </script>
+
+</body>
+</html>
